@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: game-office
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/game_office
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8080
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:my-secret-key}
