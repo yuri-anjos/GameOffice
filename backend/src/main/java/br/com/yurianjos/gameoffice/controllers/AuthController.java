@@ -67,10 +67,15 @@ public class AuthController {
             throw new CustomException("Email de usuário já está em uso!", HttpStatus.BAD_REQUEST.value());
         }
 
-        var encryptedPassword = new BCryptPasswordEncoder().encode(dto.password());
-        var user = new User(dto.email(), dto.username(), encryptedPassword);
+        if(!dto.password().equals(dto.confirmPassword())){
+            throw new CustomException("Senha e confirmação de senha devem coincidir!", HttpStatus.BAD_REQUEST.value());
+        }
 
-        this.userRepository.save(user);
-        return ResponseEntity.ok().build();
+        var encryptedPassword = new BCryptPasswordEncoder().encode(dto.password());
+        var userData = new User(dto.email(), dto.username(), encryptedPassword);
+
+        var user = this.userRepository.save(userData);
+        var response = this.tokenService.generateToken(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
