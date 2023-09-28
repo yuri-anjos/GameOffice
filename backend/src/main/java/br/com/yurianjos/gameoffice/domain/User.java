@@ -49,13 +49,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<RentedGame> rentedGames;
 
-    public User(String email, String username, String password) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.role = Roles.USER.name();
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (Roles.ADMIN.name().equals(this.role)) {

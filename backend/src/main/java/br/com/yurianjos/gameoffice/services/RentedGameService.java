@@ -24,7 +24,7 @@ public class RentedGameService {
     @Autowired
     private UserService userService;
 
-    public void rentGame(Long userId, Long gameID) throws CustomException {
+    public Long rentGame(Long userId, Long gameID) throws CustomException {
         User admin = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         var user = this.userService.findById(userId, Boolean.TRUE);
@@ -43,7 +43,7 @@ public class RentedGameService {
                 .guaranty(game.getPrice())
                 .build();
 
-        this.rentedGameRepository.save(rentedGame);
+        return this.rentedGameRepository.save(rentedGame).getId();
     }
 
     public ReturnRentedGameResponseDTO returnRentedGame(Long rentedGameId) throws CustomException {

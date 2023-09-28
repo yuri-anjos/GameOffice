@@ -1,5 +1,6 @@
 package br.com.yurianjos.gameoffice.controllers;
 
+import br.com.yurianjos.gameoffice.dtos.CreatedResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
 import br.com.yurianjos.gameoffice.services.RentedGameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ public class RentedGameController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/user/{userId}/rent/{gameId}")
     public ResponseEntity rentGame(@PathVariable Long userId, @PathVariable Long gameId) throws CustomException {
-        this.rentedGameService.rentGame(userId, gameId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        var id = this.rentedGameService.rentGame(userId, gameId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CreatedResponseDTO(id));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

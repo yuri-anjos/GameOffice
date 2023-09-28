@@ -1,6 +1,7 @@
 package br.com.yurianjos.gameoffice.domain;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,11 +35,6 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(columnDefinition = "BLOB", nullable = false)
-    private Byte[] cover;
 
     @Column(nullable = false)
     private String name;
@@ -70,4 +67,7 @@ public class Game {
             inverseJoinColumns = {
                     @JoinColumn(name = "console_id")})
     private Set<Console> consoles;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private GameImage cover;
 }

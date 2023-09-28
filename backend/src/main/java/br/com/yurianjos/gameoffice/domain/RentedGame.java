@@ -46,7 +46,6 @@ public class RentedGame {
     private Game game;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -70,12 +69,10 @@ public class RentedGame {
     }
 
     public Double calculatePricePerDay() {
-        var game = this.getGame();
-        return game.getPrice() / 4 / 30;
+        return this.getGuaranty() / 4 / 30;
     }
 
     public Double calculateTotalPrice(Long daysRented, Double pricePerDay) {
-        var game = this.getGame();
-        return (game.getPrice() * 0.1) + (daysRented * pricePerDay);
+        return (this.getGuaranty() * 0.1) + (daysRented * pricePerDay);
     }
 }

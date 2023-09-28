@@ -21,4 +21,8 @@ public class Genre {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
+
+    public Genre(Long id) {
+        this.id = id;
+    }
 }

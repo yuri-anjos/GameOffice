@@ -1,5 +1,6 @@
 package br.com.yurianjos.gameoffice.controllers;
 
+import br.com.yurianjos.gameoffice.domain.Roles;
 import br.com.yurianjos.gameoffice.domain.User;
 import br.com.yurianjos.gameoffice.dtos.LoginRequestDTO;
 import br.com.yurianjos.gameoffice.dtos.RegisterRequestDTO;
@@ -72,7 +73,12 @@ public class AuthController {
         }
 
         var encryptedPassword = new BCryptPasswordEncoder().encode(dto.password());
-        var userData = new User(dto.email(), dto.username(), encryptedPassword);
+        var userData = User.builder()
+                .email(dto.email())
+                .username(dto.username())
+                .password(dto.password())
+                .role(Roles.USER.name())
+                .build();
 
         var user = this.userRepository.save(userData);
         var response = this.tokenService.generateToken(user);
