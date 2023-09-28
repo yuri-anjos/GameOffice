@@ -45,8 +45,8 @@ public class GameService {
                 .totalUnits(dto.totalUnits())
                 .availableUnits(dto.totalUnits())
                 .year(dto.year())
-                .consoles(Arrays.stream(dto.consoles()).map(id -> new Console(id)).collect(Collectors.toSet()))
-                .genres(Arrays.stream(dto.genres()).map(id -> new Genre(id)).collect(Collectors.toSet()))
+                .consoles(Arrays.stream(dto.consoles()).map(Console::new).collect(Collectors.toSet()))
+                .genres(Arrays.stream(dto.genres()).map(Genre::new).collect(Collectors.toSet()))
                 .build();
 
         return this.gameRepository.save(game).getId();
@@ -66,8 +66,8 @@ public class GameService {
         game.setYear(dto.year());
         game.setPrice(dto.price());
         game.setHoursLength(dto.hoursLength());
-        game.setConsoles(Arrays.stream(dto.consoles()).map(id -> new Console(id)).collect(Collectors.toSet()));
-        game.setGenres(Arrays.stream(dto.genres()).map(id -> new Genre(id)).collect(Collectors.toSet()));
+        game.setConsoles(Arrays.stream(dto.consoles()).map(Console::new).collect(Collectors.toSet()));
+        game.setGenres(Arrays.stream(dto.genres()).map(Genre::new).collect(Collectors.toSet()));
 
         this.gameRepository.save(game);
     }

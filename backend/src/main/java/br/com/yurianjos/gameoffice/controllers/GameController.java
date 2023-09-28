@@ -1,10 +1,12 @@
 package br.com.yurianjos.gameoffice.controllers;
 
+import br.com.yurianjos.gameoffice.domain.Game;
 import br.com.yurianjos.gameoffice.dtos.CreatedResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.GameRequestDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
 import br.com.yurianjos.gameoffice.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ public class GameController {
     private GameService gameService;
 
     @GetMapping
-    public ResponseEntity searchGames(
+    public ResponseEntity<Page<Game>> searchGames(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "3") int size,
             @RequestParam(required = false) String search,
@@ -43,27 +45,27 @@ public class GameController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
-    public ResponseEntity createGame(@RequestBody GameRequestDTO dto) {
+    public ResponseEntity<CreatedResponseDTO> createGame(@RequestBody GameRequestDTO dto) {
         var id = this.gameService.createGame(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CreatedResponseDTO(id));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{gameId}")
-    public ResponseEntity updateGame(@PathVariable Long gameId, @RequestBody GameRequestDTO dto) throws CustomException {
+    public ResponseEntity<Void> updateGame(@PathVariable Long gameId, @RequestBody GameRequestDTO dto) throws CustomException {
         this.gameService.updateGame(gameId, dto);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/{gameId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity saveImage(@PathVariable Long gameId, @RequestParam("file") MultipartFile file) throws CustomException, IOException {
+    public ResponseEntity<Void> saveImage(@PathVariable Long gameId, @RequestParam("file") MultipartFile file) throws CustomException, IOException {
         this.gameService.saveImage(gameId, file);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/{gameId}/image")
-    public ResponseEntity getImage(@PathVariable Long gameId) throws CustomException {
+    public ResponseEntity<byte[]> getImage(@PathVariable Long gameId) throws CustomException {
         var cover = this.gameService.getImage(gameId);
         if(cover == null) {
             return ResponseEntity.ok().build();
