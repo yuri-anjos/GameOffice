@@ -11,6 +11,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -51,6 +52,9 @@ public class Game {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "game_genre",
+            uniqueConstraints = {
+                    @UniqueConstraint(columnNames = {"game_id", "genre_id"})
+            },
             joinColumns = {
                     @JoinColumn(name = "game_id")},
             inverseJoinColumns = {
@@ -59,6 +63,9 @@ public class Game {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "game_console",
+            uniqueConstraints = {
+                    @UniqueConstraint(columnNames = {"game_id", "console_id"})
+            },
             joinColumns = {
                     @JoinColumn(name = "game_id")},
             inverseJoinColumns = {

@@ -53,7 +53,6 @@ public class RentedGame {
     @Column(nullable = false)
     private boolean active;
 
-    @Column(nullable = false)
     @CreationTimestamp
     private LocalDateTime created;
 

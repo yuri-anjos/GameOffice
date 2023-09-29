@@ -1,12 +1,12 @@
 package br.com.yurianjos.gameoffice.controllers;
 
-import br.com.yurianjos.gameoffice.domain.Game;
 import br.com.yurianjos.gameoffice.dtos.CreatedResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.GameRequestDTO;
+import br.com.yurianjos.gameoffice.dtos.GameResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
 import br.com.yurianjos.gameoffice.services.GameService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/game")
@@ -32,7 +33,7 @@ public class GameController {
     private GameService gameService;
 
     @GetMapping
-    public ResponseEntity<Page<Game>> searchGames(
+    public ResponseEntity<List<GameResponseDTO>> searchGames(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "3") int size,
             @RequestParam(required = false) String search,
@@ -43,16 +44,35 @@ public class GameController {
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping("/{gameId}")
+    public ResponseEntity<GameResponseDTO> getGame(@PathVariable Long gameId) throws CustomException {
+        var response = this.gameService.getGame(gameId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping(value = "/{gameId}/image")
+    public ResponseEntity<byte[]> getImage(@PathVariable Long gameId) throws CustomException {
+        var cover = this.gameService.getImage(gameId);
+
+        if (cover == null) {
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(cover.getContentType()))
+                .body(cover.getData());
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
-    public ResponseEntity<CreatedResponseDTO> createGame(@RequestBody GameRequestDTO dto) {
+    public ResponseEntity<CreatedResponseDTO> createGame(@RequestBody @Valid GameRequestDTO dto) {
         var id = this.gameService.createGame(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CreatedResponseDTO(id));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{gameId}")
-    public ResponseEntity<Void> updateGame(@PathVariable Long gameId, @RequestBody GameRequestDTO dto) throws CustomException {
+    public ResponseEntity<Void> updateGame(@PathVariable Long gameId, @RequestBody @Valid GameRequestDTO dto) throws CustomException {
         this.gameService.updateGame(gameId, dto);
         return ResponseEntity.ok().build();
     }
@@ -62,16 +82,5 @@ public class GameController {
     public ResponseEntity<Void> saveImage(@PathVariable Long gameId, @RequestParam("file") MultipartFile file) throws CustomException, IOException {
         this.gameService.saveImage(gameId, file);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping(value = "/{gameId}/image")
-    public ResponseEntity<byte[]> getImage(@PathVariable Long gameId) throws CustomException {
-        var cover = this.gameService.getImage(gameId);
-        if(cover == null) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(cover.getContentType()))
-                .body(cover.getData());
     }
 }

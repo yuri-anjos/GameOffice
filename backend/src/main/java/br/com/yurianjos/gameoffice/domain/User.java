@@ -2,11 +2,9 @@ package br.com.yurianjos.gameoffice.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Table(name = "users")
 @Entity(name = "users")
@@ -45,9 +42,6 @@ public class User implements UserDetails {
     private String password;
 
     private String role;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<RentedGame> rentedGames;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -5,20 +5,22 @@ import br.com.yurianjos.gameoffice.domain.Game;
 import br.com.yurianjos.gameoffice.domain.GameImage;
 import br.com.yurianjos.gameoffice.domain.Genre;
 import br.com.yurianjos.gameoffice.dtos.GameRequestDTO;
+import br.com.yurianjos.gameoffice.dtos.GameResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
 import br.com.yurianjos.gameoffice.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,14 +29,25 @@ public class GameService {
     @Autowired
     private GameRepository gameRepository;
 
-    public Page<Game> searchGames(int page, int size, String search, Long console, Collection<Long> genres, Integer year) {
+    public List<GameResponseDTO> searchGames(int page, int size, String search, Long console, Collection<Long> genres, Integer year) {
         PageRequest pageRequest = PageRequest.of(
                 page,
                 size,
                 Sort.Direction.ASC,
                 "name");
+        var result = this.gameRepository.searchGames(!StringUtils.hasText(search) ? null : search, console, CollectionUtils.isEmpty(genres) ? null : genres, year, pageRequest);
 
-        return this.gameRepository.searchGames(search, console, CollectionUtils.isEmpty(genres) ? null : genres, year, pageRequest);
+        return result.stream().map(game -> new GameResponseDTO(game)).collect(Collectors.toList());
+    }
+
+    public GameResponseDTO getGame(Long gameId) throws CustomException {
+        var game = this.findById(gameId);
+        return new GameResponseDTO(game);
+    }
+
+    public GameImage getImage(Long gameId) throws CustomException {
+        var game = this.findById(gameId);
+        return game.getCover();
     }
 
     public Long createGame(GameRequestDTO dto) {
@@ -53,7 +66,7 @@ public class GameService {
     }
 
     public void updateGame(Long gameId, GameRequestDTO dto) throws CustomException {
-        var game = this.findById(gameId, true);
+        var game = this.findById(gameId);
 
         var diff = game.getTotalUnits() - dto.totalUnits();
         if (diff > 0) {
@@ -72,13 +85,8 @@ public class GameService {
         this.gameRepository.save(game);
     }
 
-    public GameImage getImage(Long gameId) throws CustomException {
-        var game = this.findById(gameId, true);
-        return game.getCover();
-    }
-
     public void saveImage(Long gameId, MultipartFile file) throws CustomException, IOException {
-        var game = this.findById(gameId, true);
+        var game = this.findById(gameId);
 
         var cover = game.getCover() == null ? GameImage.builder().build() : game.getCover();
         cover.setData(file.getBytes());
@@ -88,12 +96,7 @@ public class GameService {
         this.gameRepository.save(game);
     }
 
-    public Game findById(Long id, boolean throwError) throws CustomException {
-        var game = this.gameRepository.findById(id).orElse(null);
-        if (throwError && game == null) {
-            throw new CustomException("Game não encontrado!", HttpStatus.NOT_FOUND.value());
-        } else {
-            return game;
-        }
+    public Game findById(Long id) throws CustomException {
+        return this.gameRepository.findById(id).orElseThrow(()->new CustomException("Game não encontrado!", HttpStatus.NOT_FOUND.value()));
     }
 }

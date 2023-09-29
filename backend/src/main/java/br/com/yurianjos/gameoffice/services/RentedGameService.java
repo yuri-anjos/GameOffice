@@ -27,8 +27,8 @@ public class RentedGameService {
     public Long rentGame(Long userId, Long gameID) throws CustomException {
         User admin = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        var user = this.userService.findById(userId, Boolean.TRUE);
-        var game = this.gameService.findById(gameID, Boolean.TRUE);
+        var user = this.userService.findById(userId);
+        var game = this.gameService.findById(gameID);
 
         if (Integer.valueOf(0).equals(game.getAvailableUnits())) {
             throw new CustomException("Não há cópias de '" + game.getName() + "' disponíveis!", HttpStatus.BAD_REQUEST.value());
@@ -47,7 +47,7 @@ public class RentedGameService {
     }
 
     public ReturnRentedGameResponseDTO returnRentedGame(Long rentedGameId) throws CustomException {
-        var rentedGame = this.findById(rentedGameId, Boolean.TRUE);
+        var rentedGame = this.findById(rentedGameId);
         var game = rentedGame.getGame();
 
         if (!rentedGame.isActive()) {
@@ -69,12 +69,7 @@ public class RentedGameService {
         return new ReturnRentedGameResponseDTO(daysRented, pricePerDay, totalPrice);
     }
 
-    public RentedGame findById(Long id, boolean throwError) throws CustomException {
-        var rentedGame = this.rentedGameRepository.findById(id).orElse(null);
-        if (throwError && rentedGame == null) {
-            throw new CustomException("Aluguel de jogo não encontrado!", HttpStatus.NOT_FOUND.value());
-        } else {
-            return rentedGame;
-        }
+    public RentedGame findById(Long id) throws CustomException {
+        return this.rentedGameRepository.findById(id).orElseThrow(() -> new CustomException("Aluguel de jogo não encontrado!", HttpStatus.NOT_FOUND.value()));
     }
 }
