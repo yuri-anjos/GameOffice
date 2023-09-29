@@ -37,7 +37,7 @@ public class GameService {
                 "name");
         var result = this.gameRepository.searchGames(!StringUtils.hasText(search) ? null : search, console, CollectionUtils.isEmpty(genres) ? null : genres, year, pageRequest);
 
-        return result.stream().map(game -> new GameResponseDTO(game)).collect(Collectors.toList());
+        return result.stream().map(GameResponseDTO::new).collect(Collectors.toList());
     }
 
     public GameResponseDTO getGame(Long gameId) throws CustomException {

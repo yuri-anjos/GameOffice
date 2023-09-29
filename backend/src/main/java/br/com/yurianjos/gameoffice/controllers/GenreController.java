@@ -1,6 +1,5 @@
 package br.com.yurianjos.gameoffice.controllers;
 
-import br.com.yurianjos.gameoffice.domain.Console;
 import br.com.yurianjos.gameoffice.domain.Genre;
 import br.com.yurianjos.gameoffice.services.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
