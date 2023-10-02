@@ -1,6 +1,7 @@
 package br.com.yurianjos.gameoffice.infra.security;
 
 import br.com.yurianjos.gameoffice.repositories.UserRepository;
+import br.com.yurianjos.gameoffice.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,10 +27,10 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var authHeader = request.getHeader("Authorization");
         var token = authHeader == null ? null : authHeader.replace("Bearer ", "");
-        var username = this.tokenService.validateToken(token);
+        var username = tokenService.validateToken(token);
 
         if (username != null) {
-            var user = this.userRepository.findByUsername(username);
+            var user = userRepository.findByUsername(username);
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

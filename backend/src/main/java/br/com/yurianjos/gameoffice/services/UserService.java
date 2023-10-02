@@ -5,36 +5,36 @@ import br.com.yurianjos.gameoffice.dtos.UpdateUserRequestDTO;
 import br.com.yurianjos.gameoffice.dtos.UserResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
 import br.com.yurianjos.gameoffice.repositories.UserRepository;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@AllArgsConstructor
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private WishService wishService;
+    private final WishService wishService;
+
+    private final ContextService contextService;
 
     public UserResponseDTO getUser() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        var gamesWished = wishService.getWishedGamesIds(user.getId());
-        return new UserResponseDTO(user, gamesWished);
+        var user = contextService.getContextUser();
+        var whishedGames = wishService.getWishedGamesIds(user.getId());
+        return new UserResponseDTO(user, whishedGames);
     }
 
     public void updateUser(UpdateUserRequestDTO dto) throws CustomException {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var user = contextService.getContextUser();
 
-        if (!user.getUsername().equals(dto.username()) && this.userRepository.existsByUsername(dto.username())) {
+        if (!user.getUsername().equals(dto.username()) && userRepository.existsByUsername(dto.username())) {
             throw new CustomException("Nome de usuário já está em uso!", HttpStatus.BAD_REQUEST.value());
         }
 
-        if (!user.getEmail().equals(dto.email()) && this.userRepository.existsByEmail(dto.email())) {
+        if (!user.getEmail().equals(dto.email()) && userRepository.existsByEmail(dto.email())) {
             throw new CustomException("Email de usuário já está em uso!", HttpStatus.BAD_REQUEST.value());
         }
 
@@ -50,10 +50,11 @@ public class UserService {
         user.setEmail(dto.email());
         user.setUsername(dto.username());
 
-        this.userRepository.save(user);
+        userRepository.save(user);
     }
 
     public User findById(Long id) throws CustomException {
-        return this.userRepository.findById(id).orElseThrow(() -> new CustomException("Usuário não encontrado!", HttpStatus.NOT_FOUND.value()));
+        return userRepository.findById(id).orElseThrow(
+                () -> new CustomException("Usuário não encontrado!", HttpStatus.NOT_FOUND.value()));
     }
 }

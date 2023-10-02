@@ -2,18 +2,18 @@ package br.com.yurianjos.gameoffice.services;
 
 import br.com.yurianjos.gameoffice.domain.Genre;
 import br.com.yurianjos.gameoffice.repositories.GenreRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class GenreService {
 
-    @Autowired
-    private GenreRepository genreRepository;
+    private final GenreRepository genreRepository;
 
     public List<Genre> getGenres() {
-        return this.genreRepository.findAll();
+        return genreRepository.findAll();
     }
 }

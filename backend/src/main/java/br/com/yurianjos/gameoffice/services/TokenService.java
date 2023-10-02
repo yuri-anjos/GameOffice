@@ -1,4 +1,4 @@
-package br.com.yurianjos.gameoffice.infra.security;
+package br.com.yurianjos.gameoffice.services;
 
 import br.com.yurianjos.gameoffice.domain.User;
 import br.com.yurianjos.gameoffice.dtos.LoginResponseDTO;
@@ -22,16 +22,16 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    private final String ISSUER = "game-office-api";
+    private String issuer = "game-office-api";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenService.class);
 
     public LoginResponseDTO generateToken(User user) throws CustomException {
         try {
             var algorithm = Algorithm.HMAC256(secret);
-            var expiresAt = this.getExpirationDate();
+            var expiresAt = getExpirationDate();
             var token = JWT.create()
-                    .withIssuer(ISSUER)
+                    .withIssuer(issuer)
                     .withSubject(user.getUsername())
                     .withExpiresAt(expiresAt.toInstant(ZoneOffset.of("-03:00")))
                     .sign(algorithm);
@@ -52,7 +52,7 @@ public class TokenService {
         try {
             var algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer(ISSUER)
+                    .withIssuer(issuer)
                     .build()
                     .verify(token)
                     .getSubject();

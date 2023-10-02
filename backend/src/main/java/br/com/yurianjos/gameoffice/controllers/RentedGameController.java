@@ -22,8 +22,8 @@ public class RentedGameController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/user/{userId}/rent/{gameId}")
     public ResponseEntity<CreatedResponseDTO> rentGame(@PathVariable Long userId, @PathVariable Long gameId) throws CustomException {
-        var id = this.rentedGameService.rentGame(userId, gameId);
-        return ResponseEntity.ok().body(new CreatedResponseDTO(id));
+        var rentedGame = this.rentedGameService.rentGame(userId, gameId);
+        return ResponseEntity.ok().body(new CreatedResponseDTO(rentedGame.getId()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

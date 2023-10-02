@@ -6,7 +6,7 @@ import br.com.yurianjos.gameoffice.dtos.LoginRequestDTO;
 import br.com.yurianjos.gameoffice.dtos.LoginResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.RegisterRequestDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
-import br.com.yurianjos.gameoffice.infra.security.TokenService;
+import br.com.yurianjos.gameoffice.services.TokenService;
 import br.com.yurianjos.gameoffice.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,23 +41,23 @@ public class AuthController {
 
         Authentication auth;
         try {
-            auth = this.authenticationManager.authenticate(login);
+            auth = authenticationManager.authenticate(login);
         } catch (BadCredentialsException e) {
             throw new CustomException("Credenciais Inválidas!", HttpStatus.BAD_REQUEST.value());
         }
 
-        var response = this.tokenService.generateToken((User) auth.getPrincipal());
+        var response = tokenService.generateToken((User) auth.getPrincipal());
 
         return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/register")
     public ResponseEntity<LoginResponseDTO> register(@RequestBody @Valid RegisterRequestDTO dto) throws CustomException {
-        if (this.userRepository.existsByUsername(dto.username())) {
+        if (userRepository.existsByUsername(dto.username())) {
             throw new CustomException("Nome de usuário já está em uso!", HttpStatus.BAD_REQUEST.value());
         }
 
-        if (this.userRepository.existsByEmail(dto.email())) {
+        if (userRepository.existsByEmail(dto.email())) {
             throw new CustomException("Email de usuário já está em uso!", HttpStatus.BAD_REQUEST.value());
         }
 
@@ -73,8 +73,8 @@ public class AuthController {
                 .role(Roles.USER.name())
                 .build();
 
-        var user = this.userRepository.save(userData);
-        var response = this.tokenService.generateToken(user);
+        var user = userRepository.save(userData);
+        var response = tokenService.generateToken(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

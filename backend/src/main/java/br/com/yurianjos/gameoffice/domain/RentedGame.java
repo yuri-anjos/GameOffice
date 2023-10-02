@@ -15,6 +15,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ import java.time.temporal.ChronoUnit;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class RentedGame {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +50,10 @@ public class RentedGame {
     private User user;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private User admin;
+    private User rentAdmin;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User returnAdmin;
 
     @Column(nullable = false)
     private boolean active;
