@@ -40,7 +40,7 @@ public class GameService {
         var result = gameRepository.searchGames(!StringUtils.hasText(search) ? null : search, console, CollectionUtils.isEmpty(genres) ? null : genres, year, pageRequest);
 
         return new PageImpl<>(
-                result.getContent().stream().map(GameResponseDTO::new).collect(Collectors.toList()),
+                result.getContent().stream().map(GameResponseDTO::new).toList(),
                 pageRequest,
                 result.getTotalElements()
         );

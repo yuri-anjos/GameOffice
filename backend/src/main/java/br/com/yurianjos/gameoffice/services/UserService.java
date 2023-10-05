@@ -30,11 +30,11 @@ public class UserService {
     public void updateUser(UpdateUserRequestDTO dto) throws CustomException {
         var user = contextService.getContextUser();
 
-        if (!user.getUsername().equals(dto.username()) && userRepository.existsByUsername(dto.username())) {
+        if (!user.getUsername().equals(dto.username()) && Boolean.TRUE.equals(userRepository.existsByUsername(dto.username()))) {
             throw new CustomException("Nome de usuário já está em uso!", HttpStatus.BAD_REQUEST.value());
         }
 
-        if (!user.getEmail().equals(dto.email()) && userRepository.existsByEmail(dto.email())) {
+        if (!user.getEmail().equals(dto.email()) && Boolean.TRUE.equals(userRepository.existsByEmail(dto.email()))) {
             throw new CustomException("Email de usuário já está em uso!", HttpStatus.BAD_REQUEST.value());
         }
 
