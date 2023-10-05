@@ -1,7 +1,7 @@
 package br.com.yurianjos.gameoffice.infra;
 
 
-import br.com.yurianjos.gameoffice.dtos.ExceptionDTO;
+import br.com.yurianjos.gameoffice.dtos.exceptions.ExceptionDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

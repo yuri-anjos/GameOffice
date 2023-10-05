@@ -91,7 +91,7 @@ class RentedGameServiceTest {
 
         assertThat(result).isEqualTo(expected);
         assertThat(capturedRentedGame.getGuaranty()).isEqualTo(price);
-        assertThat(capturedRentedGame.getGame().getAvailableUnits()).isEqualTo(0);
+        assertThat(capturedRentedGame.getGame().getAvailableUnits()).isZero();
     }
 
     @Test

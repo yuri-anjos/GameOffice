@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class CustomException extends Exception {
-    private int statusCode;
+    private final int statusCode;
 
     public CustomException(String message, int statusCode) {
         super(message);
