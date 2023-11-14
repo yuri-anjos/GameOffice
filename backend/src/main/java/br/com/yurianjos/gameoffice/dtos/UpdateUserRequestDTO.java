@@ -7,7 +7,7 @@ import lombok.Builder;
 @Builder
 public record UpdateUserRequestDTO(
         @NotBlank
-        String username,
+        String name,
         @Email
         @NotBlank
         String email,

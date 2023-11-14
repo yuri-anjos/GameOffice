@@ -27,10 +27,10 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var authHeader = request.getHeader("Authorization");
         var token = authHeader == null ? null : authHeader.replace("Bearer ", "");
-        var username = tokenService.validateToken(token);
+        var email = tokenService.validateToken(token);
 
-        if (username != null) {
-            var user = userRepository.findByUsername(username);
+        if (email != null) {
+            var user = userRepository.findByEmail(email);
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

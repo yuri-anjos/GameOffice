@@ -50,7 +50,7 @@ class UserServiceTest {
                 .id(1L)
                 .email("email@email.com")
                 .role("USER")
-                .username("username")
+                .name("name")
                 .build();
 
         var whishedGames = Arrays.asList(1L, 2L, 3L);
@@ -70,63 +70,25 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUserThrowUsernameIsAlreadyTaken() {
-        //given
-        var userId = 1L;
-        var oldUsername = "oldUsername";
-        var oldEmail = "oldEmail@email.com";
-        var password = "123";
-        var confirmPassword = "123";
-
-        var newUsername = "newUsername";
-        var newEmail = "newEmail@email.com";
-
-        var user = User.builder()
-                .id(userId)
-                .username(oldUsername)
-                .email(oldEmail)
-                .build();
-
-        var dto = UpdateUserRequestDTO.builder()
-                .username(newUsername)
-                .email(newEmail)
-                .password(password)
-                .confirmPassword(confirmPassword)
-                .build();
-
-        //when
-        when(contextService.getContextUser()).thenReturn(user);
-        when(userRepository.existsByUsername(dto.username())).thenReturn(Boolean.TRUE);
-
-        //then
-        assertThatThrownBy(() -> underTest.updateUser(dto))
-                .isInstanceOf(CustomException.class)
-                .hasMessage("Nome de usuário já está em uso!");
-        verify(contextService).getContextUser();
-        verify(userRepository).existsByUsername(any());
-        verify(userRepository, never()).existsByEmail(any());
-    }
-
-    @Test
     void updateUserThrowEmailIsAlreadyTaken() {
         //given
         var userId = 1L;
-        var oldUsername = "oldUsername";
+        var oldName = "oldname";
         var oldEmail = "oldEmail@email.com";
         var password = "123";
         var confirmPassword = "123";
 
-        var newUsername = "newUsername";
+        var newName = "newname";
         var newEmail = "newEmail@email.com";
 
         var user = User.builder()
                 .id(userId)
-                .username(oldUsername)
+                .name(oldName)
                 .email(oldEmail)
                 .build();
 
         var dto = UpdateUserRequestDTO.builder()
-                .username(newUsername)
+                .name(newName)
                 .email(newEmail)
                 .password(password)
                 .confirmPassword(confirmPassword)
@@ -134,7 +96,6 @@ class UserServiceTest {
 
         //when
         when(contextService.getContextUser()).thenReturn(user);
-        when(userRepository.existsByUsername(dto.username())).thenReturn(Boolean.FALSE);
         when(userRepository.existsByEmail(dto.email())).thenReturn(Boolean.TRUE);
 
         //then
@@ -142,7 +103,6 @@ class UserServiceTest {
                 .isInstanceOf(CustomException.class)
                 .hasMessage("Email de usuário já está em uso!");
         verify(contextService).getContextUser();
-        verify(userRepository).existsByUsername(any());
         verify(userRepository).existsByEmail(any());
         verify(userRepository, never()).save(user);
     }
@@ -151,22 +111,22 @@ class UserServiceTest {
     void updateUserThrowIncorrectPasswordConfirmation() {
         //given
         var userId = 1L;
-        var oldUsername = "oldUsername";
+        var oldName = "oldname";
         var oldEmail = "oldEmail@email.com";
         var password = "123";
         var confirmPassword = "1234";
 
-        var newUsername = "newUsername";
+        var newName = "newname";
         var newEmail = "newEmail@email.com";
 
         var user = User.builder()
                 .id(userId)
-                .username(oldUsername)
+                .name(oldName)
                 .email(oldEmail)
                 .build();
 
         var dto = UpdateUserRequestDTO.builder()
-                .username(newUsername)
+                .name(newName)
                 .email(newEmail)
                 .password(password)
                 .confirmPassword(confirmPassword)
@@ -174,7 +134,6 @@ class UserServiceTest {
 
         //when
         when(contextService.getContextUser()).thenReturn(user);
-        when(userRepository.existsByUsername(dto.username())).thenReturn(Boolean.FALSE);
         when(userRepository.existsByEmail(dto.email())).thenReturn(Boolean.FALSE);
 
         //then
@@ -182,7 +141,6 @@ class UserServiceTest {
                 .isInstanceOf(CustomException.class)
                 .hasMessage("Senha e confirmação de senha devem coincidir!");
         verify(contextService).getContextUser();
-        verify(userRepository).existsByUsername(any());
         verify(userRepository).existsByEmail(any());
         verify(userRepository, never()).save(user);
     }
@@ -191,22 +149,22 @@ class UserServiceTest {
     void updateUserSeccess() throws CustomException {
         //given
         var userId = 1L;
-        var oldUsername = "oldUsername";
+        var oldName = "oldname";
         var oldEmail = "oldEmail@email.com";
         var password = "123";
         var confirmPassword = "123";
 
-        var newUsername = "oldUsername";
+        var newName = "oldname";
         var newEmail = "oldEmail@email.com";
 
         var user = User.builder()
                 .id(userId)
-                .username(oldUsername)
+                .name(oldName)
                 .email(oldEmail)
                 .build();
 
         var dto = UpdateUserRequestDTO.builder()
-                .username(newUsername)
+                .name(newName)
                 .email(newEmail)
                 .password(password)
                 .confirmPassword(confirmPassword)
@@ -219,12 +177,11 @@ class UserServiceTest {
         //then
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
         verify(contextService).getContextUser();
-        verify(userRepository, never()).existsByUsername(any());
         verify(userRepository, never()).existsByEmail(any());
         verify(userRepository).save(userArgumentCaptor.capture());
 
         var capturedUser = userArgumentCaptor.getValue();
-        assertThat(capturedUser.getUsername()).isEqualTo(dto.username());
+        assertThat(capturedUser.getName()).isEqualTo(dto.name());
         assertThat(capturedUser.getEmail()).isEqualTo(dto.email());
         assertTrue(new BCryptPasswordEncoder().matches(dto.password(), capturedUser.getPassword()));
     }

@@ -39,7 +39,6 @@ public class TokenService {
             return new LoginResponseDTO(
                     token,
                     expiresAt.toInstant(ZoneOffset.of("-03:00")),
-                    expiresAt.toInstant(ZoneOffset.UTC),
                     expiresAt
             );
         } catch (JWTCreationException exception) {
@@ -62,6 +61,6 @@ public class TokenService {
     }
 
     private LocalDateTime getExpirationDate() {
-        return LocalDateTime.now().plusHours(2);
+        return LocalDateTime.now().plusHours(1);
     }
 }

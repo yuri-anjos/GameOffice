@@ -37,7 +37,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO dto) throws CustomException {
-        var login = new UsernamePasswordAuthenticationToken(dto.username(), dto.password());
+        var login = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
 
         Authentication auth;
         try {
@@ -53,10 +53,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<LoginResponseDTO> register(@RequestBody @Valid RegisterRequestDTO dto) throws CustomException {
-        if (userRepository.existsByUsername(dto.username())) {
-            throw new CustomException("Nome de usuário já está em uso!", HttpStatus.BAD_REQUEST.value());
-        }
-
         if (userRepository.existsByEmail(dto.email())) {
             throw new CustomException("Email de usuário já está em uso!", HttpStatus.BAD_REQUEST.value());
         }
@@ -68,7 +64,7 @@ public class AuthController {
         var encryptedPassword = new BCryptPasswordEncoder().encode(dto.password());
         var userData = User.builder()
                 .email(dto.email())
-                .username(dto.username())
+                .name(dto.name())
                 .password(encryptedPassword)
                 .role(Roles.USER.name())
                 .build();
