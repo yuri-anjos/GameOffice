@@ -6,8 +6,8 @@ import br.com.yurianjos.gameoffice.dtos.LoginRequestDTO;
 import br.com.yurianjos.gameoffice.dtos.LoginResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.RegisterRequestDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
-import br.com.yurianjos.gameoffice.services.TokenService;
 import br.com.yurianjos.gameoffice.repositories.UserRepository;
+import br.com.yurianjos.gameoffice.services.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,12 +62,7 @@ public class AuthController {
         }
 
         var encryptedPassword = new BCryptPasswordEncoder().encode(dto.password());
-        var userData = User.builder()
-                .email(dto.email())
-                .name(dto.name())
-                .password(encryptedPassword)
-                .role(Roles.USER.name())
-                .build();
+        var userData = User.builder().email(dto.email()).name(dto.name()).password(encryptedPassword).role(Roles.USER.name()).build();
 
         var user = userRepository.save(userData);
         var response = tokenService.generateToken(user);

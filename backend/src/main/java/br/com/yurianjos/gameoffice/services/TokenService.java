@@ -22,7 +22,7 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    private String issuer = "game-office-api";
+    private final String ISSUER = "game-office-api";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenService.class);
 
@@ -31,7 +31,7 @@ public class TokenService {
             var algorithm = Algorithm.HMAC256(secret);
             var expiresAt = getExpirationDate();
             var token = JWT.create()
-                    .withIssuer(issuer)
+                    .withIssuer(ISSUER)
                     .withSubject(user.getUsername())
                     .withExpiresAt(expiresAt.toInstant(ZoneOffset.of("-03:00")))
                     .sign(algorithm);
@@ -51,7 +51,7 @@ public class TokenService {
         try {
             var algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer(issuer)
+                    .withIssuer(ISSUER)
                     .build()
                     .verify(token)
                     .getSubject();
