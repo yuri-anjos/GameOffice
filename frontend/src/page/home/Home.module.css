@@ -1,0 +1,29 @@
+.section_home {
+	display: flex;
+	gap: 1em;
+}
+
+.section_home aside {
+	width: 30%;
+	padding: 1em;
+	box-shadow: 0 0 1px 2px black;
+}
+
+.section_home main {
+	width: 70%;
+	padding: 1em;
+	box-shadow: 0 0 1px 2px black;
+}
+
+.game_list {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 1em;
+	margin-bottom: 2em;
+}
+
+.game_card {
+	padding: 1em;
+	text-align: center;
+	box-shadow: 0 0 1px 2px black;
+}

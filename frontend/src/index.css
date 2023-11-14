@@ -1,0 +1,23 @@
+:root {
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	box-sizing: border-box;
+	text-decoration: none;
+	list-style: none;
+	background-color: rgb(92, 141, 124);
+	color: white;
+}
+
+#root {
+	min-height: 100vh;
+	position: relative;
+	padding-bottom: 150px;
+}
+
+.bold {
+	font-weight: bold;
+}
