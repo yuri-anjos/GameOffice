@@ -12,8 +12,8 @@ const INITIAL_FILTER = {
 };
 
 function Home() {
-	const { getGames, getGenres, getConsoles } = useApi();
-	const { pageParam } = useParams();
+	const { searchGames, getImage, getGenres, getConsoles } = useApi();
+	const { pageNum } = useParams();
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 
@@ -24,31 +24,41 @@ function Home() {
 	const [consoles, setConsoles] = useState([]);
 
 	useEffect(() => {
-		searchCombos();
+		async function fetchData() {
+			getConsoles().then((data) => setConsoles(data));
+			getGenres().then((data) => setGenres(data));
+		}
+
+		fetchData();
 	}, []);
 
 	useEffect(() => {
-		searchGames();
-	}, [pageParam, searchParams]);
+		async function getGames() {
+			const pg = parseInt(pageNum) || 1;
+			setPage(pg);
 
-	function searchCombos() {
-		getConsoles().then((data) => setConsoles(data));
-		getGenres().then((data) => setGenres(data));
-	}
+			const getGamesFilter = { page: pg, size: 3 };
+			for (const entry of searchParams.entries()) {
+				const [param, value] = entry;
+				getGamesFilter[param] = value;
+			}
 
-	async function searchGames() {
-		const pg = !isNaN(pageParam) ? parseInt(pageParam) : 1;
-		setPage(pg);
-
-		const getGamesFilter = { page: pg, size: 3 };
-		for (const entry of searchParams.entries()) {
-			const [param, value] = entry;
-			getGamesFilter[param] = value;
+			searchGames(getGamesFilter).then((data) => {
+				setData(data);
+				loadImages(data);
+			});
 		}
 
-		getGames(getGamesFilter).then((response) => {
-			setData(response);
+		getGames();
+	}, [pageNum, searchParams]);
+
+	async function loadImages(result) {
+		await result.content.forEach(async (i) => {
+			i.image = await getImage(i.id);
+			return i;
 		});
+		console.log(result.content);
+		setData(result);
 	}
 
 	function handleFilterChange(e) {
@@ -56,7 +66,7 @@ function Home() {
 	}
 
 	function handlePaginationChange(val) {
-		navigate({ pathname: "/page/" + val, search: `?${createSearchParams(searchParams)}` });
+		navigate({ pathname: `/${val}`, search: `?${createSearchParams(searchParams)}` });
 	}
 
 	function submitFilter(e) {
@@ -126,12 +136,29 @@ function Home() {
 				</form>
 			</aside>
 			<main>
+				<div>
+					<h3>Jogos</h3>
+					<button type="button" onClick={() => navigate("/game/create")}>
+						Cadastrar Jogo
+					</button>
+				</div>
 				<div className={css.game_list}>
-					{data.content.length > 0
+					{data.content
 						? data.content.map((game, index) => {
 								return (
-									<div className={css.game_card} key={index}>
+									<div
+										onClick={() => navigate(`/game/${game.id}`)}
+										className={css.game_card}
+										key={index}
+									>
+										<h3>{game.id}</h3>
 										<h3>{game.name}</h3>
+										{game.image && (
+											<img
+												src={`data:;base64,${game.image}`}
+												alt={`${game.name}-cover`}
+											/>
+										)}
 									</div>
 								);
 						  })

@@ -9,7 +9,7 @@
 	padding: 1em 2em;
 }
 
-.header_logo {
+.header .header_logo {
 	display: flex;
 	align-items: center;
 	gap: 1em;

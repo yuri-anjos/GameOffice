@@ -2,13 +2,16 @@ import { useContext } from "react";
 import css from "./Header.module.css";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
+import { InputUserSearch } from "../../component";
 
 function Header() {
-	const { isAuthenticated, logout } = useContext(UserContext);
+	const { isAuthenticated, logout, user } = useContext(UserContext);
+	const checkAuth = isAuthenticated();
 
 	return (
 		<header className={css.header}>
-			LOGO
+			<h1>LOGO</h1>
+			{checkAuth && user?.role === "ADMIN" && <InputUserSearch />}
 			<nav>
 				<ul>
 					<li>

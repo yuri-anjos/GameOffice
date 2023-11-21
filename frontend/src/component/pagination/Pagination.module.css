@@ -1,4 +1,12 @@
 .pagination_nav {
 	width: 100%;
 	text-align: center;
+	display: flex;
+	justify-content: center;
+	gap: 5px;
+}
+
+.pagination_nav button {
+	background-color: black;
+	color: white;
 }

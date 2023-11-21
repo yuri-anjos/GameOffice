@@ -1,0 +1,42 @@
+.input_user_search {
+	width: 300px;
+	position: relative;
+}
+
+.input_user_search .loading {
+	position: absolute;
+	right: 15px;
+	top: 10px;
+	background-color: transparent;
+}
+
+.input_user_search input {
+	height: 40px;
+	width: 100%;
+	background-color: white;
+	color: black;
+	padding: 0.5em 1em;
+}
+
+.input_user_search .results {
+	position: absolute;
+	top: 40px;
+	width: 99%;
+	left: 0.5%;
+}
+
+.input_user_search .results button {
+	width: 100%;
+	color: black;
+	background-color: white;
+	padding: 5px;
+	outline: none;
+	border: none;
+	text-align: left;
+	cursor: pointer;
+}
+
+.input_user_search .results button:hover {
+	color: black;
+	background-color: rgb(233, 233, 233);
+}

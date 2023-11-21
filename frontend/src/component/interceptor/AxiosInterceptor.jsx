@@ -14,7 +14,7 @@ function AxiosInterceptor() {
 	useEffect(() => {
 		interceptorId.current = api.interceptors.response.use(undefined, (error) => {
 			const checkAuth = isAuthenticated();
-			if (error.response.status) {
+			if (error.response?.status) {
 				if (error.response.status === 401 && !checkAuth) {
 					logout();
 					navigate("/login");

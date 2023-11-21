@@ -8,7 +8,6 @@
 	box-sizing: border-box;
 	text-decoration: none;
 	list-style: none;
-	background-color: rgb(92, 141, 124);
 	color: white;
 }
 
@@ -16,8 +15,17 @@
 	min-height: 100vh;
 	position: relative;
 	padding-bottom: 150px;
+	background-color: rgb(92, 141, 124);
 }
 
 .bold {
 	font-weight: bold;
+}
+
+.d_none {
+	display: none;
+}
+
+button {
+	background-color: black;
 }

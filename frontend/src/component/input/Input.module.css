@@ -13,9 +13,6 @@
 .form_control input {
 	padding: 0.7em;
 	border: 2px solid black;
+	color: black;
 	border-radius: 5px;
-}
-
-.form_control input::placeholder {
-	color: white;
 }

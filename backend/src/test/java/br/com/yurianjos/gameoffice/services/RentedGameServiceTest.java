@@ -168,6 +168,45 @@ class RentedGameServiceTest {
     }
 
     @Test
+    void returnRentedGameSuccessValueToPayHigherThanGuaranteedValue() throws CustomException {
+        //given
+        var rentedGameId = 1L;
+        var rentedGame = RentedGame.builder()
+                .id(rentedGameId)
+                .game(Game.builder().availableUnits(1).build())
+                .active(Boolean.TRUE)
+                .guaranty(200.0)
+                .created(LocalDateTime.now().minusDays(120))
+                .build();
+
+        var admin = User.builder()
+                .id(3L)
+                .build();
+
+        //when
+        when(contextService.getContextUser()).thenReturn(admin);
+        when(rentedGameRepository.findById(rentedGameId)).thenReturn(Optional.of(rentedGame));
+        var result = underTest.returnRentedGame(rentedGameId);
+
+        //then
+        ArgumentCaptor<RentedGame> argumentCaptor = ArgumentCaptor.forClass(RentedGame.class);
+        verify(contextService).getContextUser();
+        verify(rentedGameRepository).findById(rentedGameId);
+        verify(rentedGameRepository).save(argumentCaptor.capture());
+        var captured = argumentCaptor.getValue();
+
+        assertThat(captured.getReturnAdmin()).isEqualTo(admin);
+        assertFalse(captured.isActive());
+        assertThat(captured.getPaymentDate().toLocalDate()).isEqualTo(LocalDate.now());
+        assertThat(captured.getGame().getAvailableUnits()).isEqualTo(2);
+
+        var daysRented = captured.calculateDaysRented();
+        var pricePerDay = captured.calculatePricePerDay();
+        var totalPrice = captured.calculateTotalPrice(daysRented, pricePerDay);
+        assertThat(result).isEqualTo(new ReturnRentedGameResponseDTO(daysRented, pricePerDay, totalPrice));
+    }
+
+    @Test
     void returnRentedGameThrowError() {
         //given
         var rentedGameId = 1L;
