@@ -7,6 +7,7 @@ import br.com.yurianjos.gameoffice.domain.Genre;
 import java.util.Set;
 
 public record GameResponseDTO(
+        Long id,
         String name,
         Integer year,
         Integer hoursLength,
@@ -17,6 +18,7 @@ public record GameResponseDTO(
 
     public GameResponseDTO(Game game) {
         this(
+                game.getId(),
                 game.getName(),
                 game.getYear(),
                 game.getHoursLength(),

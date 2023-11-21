@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Table(name = "users")
-@Entity(name = "users")
+@Entity(name = "Users")
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")

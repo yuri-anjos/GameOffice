@@ -32,7 +32,7 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<Page<GameResponseDTO>> searchGames(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "3") int size,
@@ -40,19 +40,19 @@ public class GameController {
             @RequestParam(required = false) Long console,
             @RequestParam(required = false) List<Long> genres,
             @RequestParam(required = false) Integer year) {
-        var response = this.gameService.searchGames(page, size, search, console, genres, year);
+        var response = gameService.searchGames(page, size, search, console, genres, year);
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{gameId}")
     public ResponseEntity<GameResponseDTO> getGame(@PathVariable Long gameId) throws CustomException {
-        var response = this.gameService.getGame(gameId);
+        var response = gameService.getGame(gameId);
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping(value = "/{gameId}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable Long gameId) throws CustomException {
-        var cover = this.gameService.getImage(gameId);
+        var cover = gameService.getImage(gameId);
 
         if (cover == null) {
             return ResponseEntity.ok().build();
@@ -66,21 +66,21 @@ public class GameController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
     public ResponseEntity<CreatedResponseDTO> createGame(@RequestBody @Valid GameRequestDTO dto) {
-        var game = this.gameService.createGame(dto);
+        var game = gameService.createGame(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CreatedResponseDTO(game.getId()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{gameId}")
     public ResponseEntity<Void> updateGame(@PathVariable Long gameId, @RequestBody @Valid GameRequestDTO dto) throws CustomException {
-        this.gameService.updateGame(gameId, dto);
+        gameService.updateGame(gameId, dto);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/{gameId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> saveImage(@PathVariable Long gameId, @RequestParam("file") MultipartFile file) throws CustomException, IOException {
-        this.gameService.saveImage(gameId, file);
+        gameService.saveImage(gameId, file);
         return ResponseEntity.ok().build();
     }
 }

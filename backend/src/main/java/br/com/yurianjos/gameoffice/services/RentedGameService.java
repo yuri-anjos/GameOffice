@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -62,11 +63,15 @@ public class RentedGameService {
         var daysRented = rentedGame.calculateDaysRented();
         var pricePerDay = rentedGame.calculatePricePerDay();
         var totalPrice = rentedGame.calculateTotalPrice(daysRented, pricePerDay);
-        rentedGame.setPaid(totalPrice);
+        rentedGame.setPaid(totalPrice > rentedGame.getGuaranty() ? rentedGame.getGuaranty() : totalPrice);
 
         rentedGameRepository.save(rentedGame);
 
         return new ReturnRentedGameResponseDTO(daysRented, pricePerDay, totalPrice);
+    }
+
+    public List<RentedGame> getRentedGames(Long userId) {
+        return rentedGameRepository.findByUserId(userId);
     }
 
     public RentedGame findById(Long id) throws CustomException {
