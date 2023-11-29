@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -52,6 +53,9 @@ public class Game {
     @Column(nullable = false)
     private Integer hoursLength;
 
+    @ManyToOne(optional = false)
+    private Console console;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "game_genre",
             uniqueConstraints = {
@@ -62,17 +66,6 @@ public class Game {
             inverseJoinColumns = {
                     @JoinColumn(name = "genre_id")})
     private Set<Genre> genres;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "game_console",
-            uniqueConstraints = {
-                    @UniqueConstraint(columnNames = {"game_id", "console_id"})
-            },
-            joinColumns = {
-                    @JoinColumn(name = "game_id")},
-            inverseJoinColumns = {
-                    @JoinColumn(name = "console_id")})
-    private Set<Console> consoles;
 
     @OneToOne(fetch = FetchType.LAZY)
     private GameImage cover;

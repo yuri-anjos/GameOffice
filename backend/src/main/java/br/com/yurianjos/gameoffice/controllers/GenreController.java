@@ -19,7 +19,7 @@ public class GenreController {
 
     @GetMapping
     public ResponseEntity<List<Genre>> getGenres() {
-        var response = this.consoleService.getGenres();
+        var response = consoleService.getGenres();
         return ResponseEntity.ok().body(response);
     }
 }

@@ -1,4 +1,10 @@
 package br.com.yurianjos.gameoffice.dtos;
 
-public record ComboDTO(Long id, String description){
+import br.com.yurianjos.gameoffice.domain.User;
+
+public record ComboDTO(Long id, String description) {
+
+    public ComboDTO(User user) {
+        this(user.getId(), user.getName());
+    }
 }

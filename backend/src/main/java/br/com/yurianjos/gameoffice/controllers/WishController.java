@@ -23,19 +23,19 @@ public class WishController {
 
     @PostMapping("/{gameId}")
     public ResponseEntity<Void> wishGame(@PathVariable Long gameId) {
-        this.wishService.wishGame(gameId);
+        wishService.wishGame(gameId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{gameId}")
     public ResponseEntity<Void> deleteWish(@PathVariable Long gameId) throws CustomException {
-        this.wishService.deleteWish(gameId);
+        wishService.deleteWish(gameId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping()
     public ResponseEntity<List<GameResponseDTO>> getWishedGames() {
-        var result = this.wishService.getWishedGames();
+        var result = wishService.getWishedGames();
         return ResponseEntity.ok().body(result);
     }
 }

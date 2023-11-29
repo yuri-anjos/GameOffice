@@ -1,6 +1,5 @@
 package br.com.yurianjos.gameoffice.controllers;
 
-import br.com.yurianjos.gameoffice.dtos.CreatedResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.GameRequestDTO;
 import br.com.yurianjos.gameoffice.dtos.GameResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
@@ -35,7 +34,7 @@ public class GameController {
     @GetMapping("/search")
     public ResponseEntity<Page<GameResponseDTO>> searchGames(
             @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "3") int size,
+            @RequestParam(required = false, defaultValue = "6") int size,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Long console,
             @RequestParam(required = false) List<Long> genres,
@@ -65,9 +64,9 @@ public class GameController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
-    public ResponseEntity<CreatedResponseDTO> createGame(@RequestBody @Valid GameRequestDTO dto) {
+    public ResponseEntity<Long> createGame(@RequestBody @Valid GameRequestDTO dto) {
         var game = gameService.createGame(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new CreatedResponseDTO(game.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(game.getId());
     }
 
     @PreAuthorize("hasRole('ADMIN')")

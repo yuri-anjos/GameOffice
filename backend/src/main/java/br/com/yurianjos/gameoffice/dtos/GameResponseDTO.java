@@ -12,9 +12,10 @@ public record GameResponseDTO(
         Integer year,
         Integer hoursLength,
         Double price,
+        Integer totalUnits,
         Integer availableUnits,
         Set<Genre> genres,
-        Set<Console> consoles) {
+        Console console) {
 
     public GameResponseDTO(Game game) {
         this(
@@ -23,8 +24,9 @@ public record GameResponseDTO(
                 game.getYear(),
                 game.getHoursLength(),
                 game.getPrice(),
+                game.getTotalUnits(),
                 game.getAvailableUnits(),
                 game.getGenres(),
-                game.getConsoles());
+                game.getConsole());
     }
 }

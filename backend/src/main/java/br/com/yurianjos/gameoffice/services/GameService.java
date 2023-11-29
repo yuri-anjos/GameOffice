@@ -64,7 +64,7 @@ public class GameService {
                 .totalUnits(dto.totalUnits())
                 .availableUnits(dto.totalUnits())
                 .year(dto.year())
-                .consoles(Arrays.stream(dto.consoles()).map(Console::new).collect(Collectors.toSet()))
+                .console(new Console(dto.console()))
                 .genres(Arrays.stream(dto.genres()).map(Genre::new).collect(Collectors.toSet()))
                 .build();
 
@@ -86,7 +86,7 @@ public class GameService {
         game.setYear(dto.year());
         game.setPrice(dto.price());
         game.setHoursLength(dto.hoursLength());
-        game.setConsoles(Arrays.stream(dto.consoles()).map(Console::new).collect(Collectors.toSet()));
+        game.setConsole(new Console(dto.console()));
         game.setGenres(Arrays.stream(dto.genres()).map(Genre::new).collect(Collectors.toSet()));
 
         gameRepository.save(game);

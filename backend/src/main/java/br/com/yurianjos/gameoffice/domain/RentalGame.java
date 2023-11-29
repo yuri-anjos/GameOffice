@@ -30,18 +30,16 @@ import java.time.temporal.ChronoUnit;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RentedGame {
+public class RentalGame {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, precision = 6, scale = 2)
-    private Double guaranty;
+    @Column(nullable = false, precision = 2)
+    private Double rent;
 
-    @Column(precision = 5, scale = 2)
-    private Double paid;
-
-    private LocalDateTime paymentDate;
+    @Column(precision = 2)
+    private Double payment;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Game game;
@@ -61,21 +59,23 @@ public class RentedGame {
     @CreationTimestamp
     private LocalDateTime created;
 
+    private LocalDateTime returnedDate;
+
     @PrePersist
     public void prePersist() {
         this.active = true;
-        this.paid = 0.0;
+        this.payment = 0.0;
     }
 
     public Long calculateDaysRented() {
-        return ChronoUnit.DAYS.between(this.getCreated().toLocalDate(), this.getPaymentDate().toLocalDate());
+        return ChronoUnit.DAYS.between(this.getCreated().toLocalDate(), this.getReturnedDate().toLocalDate());
     }
 
     public Double calculatePricePerDay() {
-        return this.getGuaranty() / 4 / 30;
+        return this.getRent() / 4 / 30;
     }
 
     public Double calculateTotalPrice(Long daysRented, Double pricePerDay) {
-        return (this.getGuaranty() * 0.1) + (daysRented * pricePerDay);
+        return (this.getRent() * 0.1) + (daysRented * pricePerDay);
     }
 }

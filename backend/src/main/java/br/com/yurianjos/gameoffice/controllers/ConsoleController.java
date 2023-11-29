@@ -19,7 +19,7 @@ public class ConsoleController {
 
     @GetMapping
     public ResponseEntity<List<Console>> getConsoles() {
-        var response = this.consoleService.getConsoles();
+        var response = consoleService.getConsoles();
         return ResponseEntity.ok().body(response);
     }
 }
