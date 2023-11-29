@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
-import { Input, Pagination, Select } from "../../component";
+import { Input, MultipleSelect, Pagination } from "../../component";
 import useApi from "../../hook/useApi";
 import css from "./Home.module.css";
-import { createSearchParams, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+	Link,
+	createSearchParams,
+	useNavigate,
+	useParams,
+	useSearchParams,
+} from "react-router-dom";
 
 const INITIAL_FILTER = {
 	search: "",
-	console: null,
+	console: [],
 	genres: [],
-	year: null,
+	year: undefined,
 };
 
 function Home() {
 	const { searchGames, getImage, getGenres, getConsoles } = useApi();
 	const { pageNum } = useParams();
-	const [searchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
 
 	const [formFilter, setFormFilter] = useState(INITIAL_FILTER);
@@ -37,29 +43,31 @@ function Home() {
 			const pg = parseInt(pageNum) || 1;
 			setPage(pg);
 
-			const getGamesFilter = { page: pg, size: 3 };
-			for (const entry of searchParams.entries()) {
-				const [param, value] = entry;
-				getGamesFilter[param] = value;
-			}
+			const params = {
+				genres: searchParams.getAll("genres")[0] || null,
+				console: searchParams.get("console"),
+				year: searchParams.get("year"),
+				search: searchParams.get("search"),
+			};
 
-			searchGames(getGamesFilter).then((data) => {
+			const searchFilters = {
+				page: pg,
+				// size: 6
+				...params,
+			};
+			searchGames(searchFilters).then((data) => {
 				setData(data);
-				loadImages(data);
 			});
 		}
 
 		getGames();
 	}, [pageNum, searchParams]);
 
-	async function loadImages(result) {
-		await result.content.forEach(async (i) => {
-			i.image = await getImage(i.id);
-			return i;
-		});
-		console.log(result.content);
-		setData(result);
-	}
+	// async function loadImage(game) {
+	// 	const result = await getImage(game.id);
+	// 	console.log(result);
+	// 	return result || undefined;
+	// }
 
 	function handleFilterChange(e) {
 		setFormFilter((previous) => ({ ...previous, [e.target.name]: e.target.value }));
@@ -73,15 +81,16 @@ function Home() {
 		e.preventDefault();
 		const { search, genres, console, year } = formFilter;
 
-		const params = {
-			genres: genres,
-		};
-		genres && (params.genres = genres);
-		search && (params.search = search);
-		console && (params.console = console);
-		year && (params.year = year);
+		genres.length &&
+			searchParams.set(
+				"genres",
+				genres.map((i) => i.id)
+			);
+		console.length && searchParams.set("console", console[0].id);
+		search && searchParams.set("search", search);
+		year && searchParams.set("year", year);
 
-		navigate({ pathname: "/", search: `?${createSearchParams(params)}` });
+		setSearchParams(searchParams, { replace: true });
 	}
 
 	function clearFilter() {
@@ -110,23 +119,26 @@ function Home() {
 						value={formFilter.year}
 						handleOnChange={handleFilterChange}
 					/>
-					<Select
-						name="console"
-						options={consoles}
+
+					<MultipleSelect
 						text="Console"
-						value={formFilter.console}
-						handleOnChange={handleFilterChange}
+						options={consoles}
+						handleOnChange={(val) => {
+							setFormFilter({ ...formFilter, console: val });
+						}}
+						value={formFilter.console || []}
+						limit={1}
 					/>
-					<div>
-						{genres.length
-							? genres.map((genre, index) => (
-									<div key={index}>
-										<input type="checkbox" value={genre.id} />
-										{genre.description}
-									</div>
-							  ))
-							: ""}
-					</div>
+
+					<MultipleSelect
+						text="Gêneros"
+						options={genres}
+						handleOnChange={(val) => {
+							setFormFilter({ ...formFilter, genres: val });
+						}}
+						value={formFilter.genres || []}
+					/>
+
 					<button type="submit" onClick={submitFilter}>
 						Aplicar
 					</button>
@@ -138,31 +150,28 @@ function Home() {
 			<main>
 				<div>
 					<h3>Jogos</h3>
-					<button type="button" onClick={() => navigate("/game/create")}>
-						Cadastrar Jogo
-					</button>
+					<Link to="/game/create">
+						<button type="button">Cadastrar Jogo</button>
+					</Link>
 				</div>
 				<div className={css.game_list}>
-					{data.content
-						? data.content.map((game, index) => {
-								return (
-									<div
-										onClick={() => navigate(`/game/${game.id}`)}
-										className={css.game_card}
-										key={index}
-									>
-										<h3>{game.id}</h3>
-										<h3>{game.name}</h3>
-										{game.image && (
-											<img
-												src={`data:;base64,${game.image}`}
-												alt={`${game.name}-cover`}
-											/>
-										)}
-									</div>
-								);
-						  })
-						: ""}
+					{data.content.length &&
+						data.content.map((game, index) => {
+							return (
+								<div
+									onClick={() => navigate(`/game/${game.id}`)}
+									className={css.game_card}
+									key={index}
+								>
+									<h3>{game.id}</h3>
+									<h3>{game.name}</h3>
+									{/* <img
+											src={`data:;base64,${loadImage(game)}`}
+											alt={`${game.name}-cover`}
+										/> */}
+								</div>
+							);
+						})}
 				</div>
 				<Pagination
 					page={page}

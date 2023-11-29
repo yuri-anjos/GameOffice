@@ -1,6 +1,7 @@
-import CreateGame from "./admin/game/CreateGame";
+import UpdateGame from "./admin/game-form/UpdateGame";
+import CreateGame from "./admin/game-form/CreateGame";
 import Game from "./admin/game/Game";
-import UpdateGame from "./admin/game/UpdateGame";
+
 import User from "./admin/user/User";
 import Home from "./home/Home";
 import Login from "./login/Login";

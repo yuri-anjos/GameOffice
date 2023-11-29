@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useApi from "../../../hook/useApi";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 function Game() {
 	const { findGame, getImage } = useApi();
@@ -14,7 +14,6 @@ function Game() {
 				setGame(data);
 			});
 			getImage(gameId).then((data) => {
-				console.log(data);
 				setImage(data);
 			});
 		}
@@ -26,8 +25,12 @@ function Game() {
 
 	return (
 		<section>
-			<div>{game.name}</div>
-			<img src={`data:;base64,${image}`} alt={`${game.name}-cover`} />
+			<span>{game.name}</span>
+			{image && <img src={`data:;base64,${image}`} alt={`${game.name}-cover`} />}
+
+			<Link to={`/game/${game.id}/update`}>
+				<button type="button">Editar</button>
+			</Link>
 		</section>
 	);
 }

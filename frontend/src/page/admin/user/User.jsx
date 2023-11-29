@@ -2,37 +2,30 @@ import { useEffect, useState } from "react";
 import useApi from "../../../hook/useApi";
 import css from "./User.module.css";
 import { useParams } from "react-router-dom";
+import { RentalHistory, RentalList } from "../../../component";
 
 function User() {
-	const { findUser, getRentedGames } = useApi();
+	const { findUser } = useApi();
 	const { userId } = useParams();
 	const [customer, setCustomer] = useState({});
-	const [rentedGames, setRentedGames] = useState([]);
 
 	useEffect(() => {
-		async function getData() {
+		async function fetchData() {
 			findUser(userId).then((data) => {
 				setCustomer(data);
-			});
-
-			getRentedGames(userId).then((data) => {
-				setRentedGames(data);
 			});
 		}
 
 		if (userId) {
-			getData();
+			fetchData();
 		}
 	}, [userId]);
 
 	return (
 		<section>
 			<div>{customer?.id ? <div>{customer.name}</div> : ""}</div>
-			<div>
-				{rentedGames.map((i) => {
-					return <span>Jogo {i.name}</span>;
-				})}
-			</div>
+			<RentalList userId={customer.id} />
+			<RentalHistory userId={customer.id} />
 		</section>
 	);
 }

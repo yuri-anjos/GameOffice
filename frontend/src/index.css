@@ -8,7 +8,7 @@
 	box-sizing: border-box;
 	text-decoration: none;
 	list-style: none;
-	color: white;
+	color: black;
 }
 
 #root {
@@ -28,4 +28,5 @@
 
 button {
 	background-color: black;
+	color: white;
 }

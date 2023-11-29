@@ -38,21 +38,46 @@ function useApi() {
 	}
 
 	async function updateGame(form, gameId) {
-		return api.put(`/game/${gameId}`, { params: form }).then(({}) => {
-			return true;
+		const body = {
+			...form,
+			genres: form.genres.map((i) => i.id),
+			console: form.console[0].id || undefined,
+		};
+		return api.put(`/game/${gameId}`, body).then(() => {
+			return;
 		});
 	}
 
 	async function createGame(form) {
-		return api.post("/game", { params: form }).then(({ data }) => {
-			return data?.id;
+		const body = {
+			...form,
+			genres: form.genres.map((i) => i.id),
+			console: form.console[0].id || undefined,
+		};
+		return api.post("/game", body).then(({ data }) => {
+			const type = "success";
+			const message = "Cadastro realizado com sucesso!";
+			setFlashMessage(message, type);
+
+			return data;
 		});
 	}
 
-	async function getRentedGames(userId) {
-		return api.get(`/rented-game/user/${userId}`).then(({ data }) => {
+	//Rental Game
+	async function getActiveRentalGames(userId) {
+		return api.get(`/rental-game/active/user/${userId}`).then(({ data }) => {
 			return data;
 		});
+	}
+
+	async function getRentalGames(userId, page, size) {
+		return api
+			.get(`/rental-game/user/${userId}`, {
+				params: { page: page - 1, size },
+			})
+			.then(({ data }) => {
+				return data;
+			});
 	}
 
 	async function getGenres() {
@@ -102,7 +127,8 @@ function useApi() {
 		getImage,
 		createGame,
 		updateGame,
-		getRentedGames,
+		getActiveRentalGames,
+		getRentalGames,
 		getGenres,
 		getConsoles,
 		getUser,

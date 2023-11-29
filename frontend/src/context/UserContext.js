@@ -5,27 +5,35 @@ import useApi from "../hook/useApi";
 const UserContext = createContext();
 
 function UserProvider({ children }) {
-	const { register, isAuthenticated, logout, login } = useAuth();
+	const { register, isAuthenticated, logout, login, checkAuthentication } = useAuth();
 	const { getUser } = useApi();
 
 	const [user, setUser] = useState(undefined);
 
 	useEffect(() => {
-		refreshUser();
+		if (checkAuthentication()) {
+			refreshUser();
+		}
 	}, []);
 
-	function refreshUser() {
-		if (isAuthenticated()) {
-			getUser().then((data) => {
-				console.log(data);
-				setUser(data);
-			});
-		}
+	async function refreshUser() {
+		getUser().then((data) => {
+			console.log(data);
+			setUser(data);
+		});
 	}
 
 	return (
 		<UserContext.Provider
-			value={{ login, register, logout, isAuthenticated, user, refreshUser }}
+			value={{
+				login,
+				register,
+				logout,
+				isAuthenticated,
+				checkAuthentication,
+				user,
+				refreshUser,
+			}}
 		>
 			{children}
 		</UserContext.Provider>

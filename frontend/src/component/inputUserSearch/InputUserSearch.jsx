@@ -1,31 +1,44 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import css from "./InputUserSearch.module.css";
 import useApi from "../../hook/useApi";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "../../hook/useDebounce";
 import { ClipLoader } from "react-spinners";
+import { UserContext } from "../../context/UserContext";
 
 function InputUserSearch() {
+	const refInputUserSearch = useRef(null);
 	const [search, setSearch] = useState("");
 	const [result, setResult] = useState([]);
-	const [focus, setFocus] = useState(false);
+	const [visibleOptions, setVisibleOptions] = useState(false);
 	const [loading, setLoading] = useState(false);
 
 	const navigate = useNavigate();
 	const { searchUsers } = useApi();
+	const { isAuthenticated, user } = useContext(UserContext);
 	const debouncedSearch = useDebounce(search, 700);
 
 	useEffect(() => {
-		setResult([]);
+		function handleClickOutside(e) {
+			if (!refInputUserSearch.current?.contains(e.target)) {
+				setVisibleOptions(false);
+			} else {
+				setVisibleOptions(true);
+			}
+		}
+
+		document.addEventListener("click", handleClickOutside, true);
+	}, []);
+
+	useEffect(() => {
 		setLoading(true);
 		if (!search) {
+			setResult([]);
 			setLoading(false);
 		}
 	}, [search]);
 
 	useEffect(() => {
-		setResult([]);
-
 		async function fetchData() {
 			searchUsers(debouncedSearch)
 				.then((data) => {
@@ -41,16 +54,6 @@ function InputUserSearch() {
 		}
 	}, [debouncedSearch]);
 
-	function onFocus() {
-		setFocus(true);
-	}
-
-	function onBlur() {
-		setTimeout(() => {
-			setFocus(false);
-		}, 100);
-	}
-
 	function handleSelectedUser(id) {
 		navigate(`/user/${id}`);
 		setSearch("");
@@ -58,14 +61,12 @@ function InputUserSearch() {
 	}
 
 	return (
-		<div className={css.input_user_search}>
+		<div className={css.input_user_search} ref={refInputUserSearch}>
 			<input
 				type="text"
 				placeholder="Buscar usuários"
 				value={search}
 				onChange={(e) => setSearch(e.target.value)}
-				onFocus={onFocus}
-				onBlur={onBlur}
 			/>
 
 			<ClipLoader
@@ -77,20 +78,19 @@ function InputUserSearch() {
 				className={css.loading}
 			/>
 
-			<div className={`${css.results} ${focus || "d_none"}`}>
-				{result?.length > 0
-					? result.map((i) => {
-							return (
-								<button
-									type="button"
-									key={i.id}
-									onClick={() => handleSelectedUser(i.id)}
-								>
-									{i.description}
-								</button>
-							);
-					  })
-					: ""}
+			<div className={`${css.results} ${!visibleOptions && "d_none"}`}>
+				{result?.length > 0 &&
+					result.map((i) => {
+						return (
+							<button
+								type="button"
+								key={i.id}
+								onClick={() => handleSelectedUser(i.id)}
+							>
+								{i.description}
+							</button>
+						);
+					})}
 			</div>
 		</div>
 	);

@@ -6,18 +6,17 @@ import { InputUserSearch } from "../../component";
 
 function Header() {
 	const { isAuthenticated, logout, user } = useContext(UserContext);
-	const checkAuth = isAuthenticated();
 
 	return (
 		<header className={css.header}>
 			<h1>LOGO</h1>
-			{checkAuth && user?.role === "ADMIN" && <InputUserSearch />}
+			{isAuthenticated && user?.role === "ADMIN" && <InputUserSearch />}
 			<nav>
 				<ul>
 					<li>
 						<Link to="/">Home</Link>
 					</li>
-					{isAuthenticated() ? (
+					{isAuthenticated ? (
 						<>
 							<li>
 								<Link to="/user/profile">Perfil</Link>
