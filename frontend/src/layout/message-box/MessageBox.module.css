@@ -1,10 +1,26 @@
 .message_box {
+	position: relative;
 	max-width: 60%;
 	text-align: center;
 	border: 2px black solid;
 	margin: 2em auto 0;
-	padding: 1em;
+	padding: 2em;
 	border-radius: 5px;
+}
+
+.message_box button {
+	position: absolute;
+	right: 1em;
+	top: 0.5em;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: black;
+	font-size: 20px;
+}
+
+.message_box button:hover {
+	color: rgb(231, 87, 87);
 }
 
 .success {

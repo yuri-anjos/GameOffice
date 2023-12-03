@@ -1,5 +1,6 @@
 package br.com.yurianjos.gameoffice.domain;
 
+import br.com.yurianjos.gameoffice.utils.Utils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +20,6 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Table
 @Entity
@@ -57,9 +57,9 @@ public class RentalGame {
     private boolean active;
 
     @CreationTimestamp
-    private LocalDateTime created;
+    private LocalDateTime rentDate;
 
-    private LocalDateTime returnedDate;
+    private LocalDateTime returnDate;
 
     @PrePersist
     public void prePersist() {
@@ -67,15 +67,9 @@ public class RentalGame {
         this.payment = 0.0;
     }
 
-    public Long calculateDaysRented() {
-        return ChronoUnit.DAYS.between(this.getCreated().toLocalDate(), this.getReturnedDate().toLocalDate());
-    }
-
-    public Double calculatePricePerDay() {
-        return this.getRent() / 4 / 30;
-    }
-
-    public Double calculateTotalPrice(Long daysRented, Double pricePerDay) {
-        return (this.getRent() * 0.1) + (daysRented * pricePerDay);
+    public Double calculateRentalPayment() {
+        var daysRented = Utils.calculateDaysBetween(this.rentDate, this.returnDate);
+        var pricePerDay = (rent / 4 / 30); //25% on a month
+        return (rent * 0.1) + (daysRented * pricePerDay); //10% initially
     }
 }

@@ -34,7 +34,7 @@ public class RentalGameService {
         var user = userService.findById(userId);
         var game = gameService.findById(gameID);
 
-        if (Integer.valueOf(0).equals(game.getAvailableUnits())) {
+        if (game.getAvailableUnits() == 0) {
             throw new CustomException("Não há cópias de '" + game.getName() + "' disponíveis!", HttpStatus.BAD_REQUEST.value());
         }
 
@@ -61,24 +61,22 @@ public class RentalGameService {
         }
 
         game.setAvailableUnits(game.getAvailableUnits() + 1);
-        rentedGame.setReturnedDate(LocalDateTime.now());
-        rentedGame.setActive(Boolean.FALSE);
+        rentedGame.setReturnDate(LocalDateTime.now());
         rentedGame.setReturnAdmin(admin);
+        rentedGame.setActive(Boolean.FALSE);
 
-        var daysRented = rentedGame.calculateDaysRented();
-        var pricePerDay = rentedGame.calculatePricePerDay();
-        var totalPrice = rentedGame.calculateTotalPrice(daysRented, pricePerDay);
+        var totalPrice = rentedGame.calculateRentalPayment();
         rentedGame.setPayment(totalPrice > rentedGame.getRent() ? rentedGame.getRent() : totalPrice);
 
         rentalGameRepository.save(rentedGame);
 
-        return new ReturnRentalGameResponseDTO(daysRented, totalPrice);
+        return new ReturnRentalGameResponseDTO(rentedGame.getRent(), rentedGame.getPayment(), rentedGame.getRent() - rentedGame.getPayment());
     }
 
     public List<RentalGameResponseDTO> getActiveRentalGames(Long userId) {
-        Sort sort = Sort.by("created").descending();
+        Sort sort = Sort.by("rentDate").descending();
 
-        var result =  rentalGameRepository.findByUserIdAndActive(userId, Boolean.TRUE, sort);
+        var result = rentalGameRepository.findByUserIdAndActive(userId, Boolean.TRUE, sort);
 
         return result.stream().map(RentalGameResponseDTO::new).toList();
     }
@@ -88,9 +86,9 @@ public class RentalGameService {
                 page,
                 size,
                 Sort.Direction.DESC,
-                "created");
+                "rentDate");
 
-        var result =  rentalGameRepository.findByUserId(userId, pageRequest);
+        var result = rentalGameRepository.findByUserId(userId, pageRequest);
 
         return new PageImpl<>(
                 result.getContent().stream().map(RentalGameResponseDTO::new).toList(),

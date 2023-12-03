@@ -80,14 +80,8 @@ function useApi() {
 			});
 	}
 
-	async function getGenres() {
-		return api.get("/genre").then(({ data }) => {
-			return data;
-		});
-	}
-
-	async function getConsoles() {
-		return api.get("/console").then(({ data }) => {
+	async function returnRentalGame(rentalGameId) {
+		return api.post(`/rental-game/${rentalGameId}/return`).then(({ data }) => {
 			return data;
 		});
 	}
@@ -112,12 +106,25 @@ function useApi() {
 	}
 
 	async function updateUser(form) {
-		return api.put("/user", form).then(({}) => {
+		return api.put("/user", form).then(({ _ }) => {
 			const type = "success";
 			const message = "Alteração realizada com sucesso!";
 			setFlashMessage(message, type);
 
 			return true;
+		});
+	}
+
+	//Combos
+	async function getGenres() {
+		return api.get("/genre").then(({ data }) => {
+			return data;
+		});
+	}
+
+	async function getConsoles() {
+		return api.get("/console").then(({ data }) => {
+			return data;
 		});
 	}
 
@@ -129,12 +136,13 @@ function useApi() {
 		updateGame,
 		getActiveRentalGames,
 		getRentalGames,
-		getGenres,
-		getConsoles,
+		returnRentalGame,
 		getUser,
 		findUser,
 		searchUsers,
 		updateUser,
+		getGenres,
+		getConsoles,
 	};
 }
 

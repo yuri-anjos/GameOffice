@@ -1,0 +1,23 @@
+.rental_table {
+	width: 100%;
+	background-color: gray;
+	margin: 1em 0;
+	font-size: 0.9em;
+}
+
+.rental_table tr {
+	height: 3em;
+}
+
+.rental_table th {
+	padding: 1em;
+}
+
+.rental_table th {
+	text-align: left;
+	padding-right: 1em;
+}
+
+.rental_table td {
+	padding: 1em;
+}

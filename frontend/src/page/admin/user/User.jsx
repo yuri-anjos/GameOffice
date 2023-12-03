@@ -23,9 +23,24 @@ function User() {
 
 	return (
 		<section>
-			<div>{customer?.id ? <div>{customer.name}</div> : ""}</div>
-			<RentalList userId={customer.id} />
-			<RentalHistory userId={customer.id} />
+			{customer?.id ? (
+				<div>
+					<span>
+						<div>{customer.name}</div>
+						<div>{customer.email}</div>
+					</span>
+				</div>
+			) : (
+				""
+			)}
+			{customer.id ? (
+				<>
+					<RentalList userId={customer.id} />
+					<RentalHistory userId={customer.id} />
+				</>
+			) : (
+				""
+			)}
 		</section>
 	);
 }

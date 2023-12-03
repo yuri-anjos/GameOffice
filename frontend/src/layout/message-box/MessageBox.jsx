@@ -8,18 +8,34 @@ function MessageBox() {
 	const [message, setMessage] = useState("Minha Mensagem");
 
 	useEffect(() => {
-		emmitter.addListener("flash-message", ({ message, type }) => {
+		emmitter.addListener("flash-message", ({ message, type, infinite = false }) => {
 			setMessage(message);
 			setType(type);
 			setIsVisible(true);
 
-			setTimeout(() => {
-				setIsVisible(false);
-			}, 5000);
+			if (!infinite) {
+				setTimeout(() => {
+					setIsVisible(false);
+				}, 5000);
+			}
 		});
 	}, []);
 
-	return isVisible && <div className={`${css.message_box} ${css[type]}`}>{message}</div>;
+	return (
+		isVisible && (
+			<div className={`${css.message_box} ${css[type]}`}>
+				<button
+					type="button"
+					onClick={() => {
+						setIsVisible(false);
+					}}
+				>
+					&#x2716;
+				</button>
+				{message}
+			</div>
+		)
+	);
 }
 
 export default MessageBox;

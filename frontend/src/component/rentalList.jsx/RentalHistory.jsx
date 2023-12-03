@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import css from "./RentalList.module.css";
 import useApi from "../../hook/useApi";
-import RentalGame from "../rentalGame/RentalGame";
 import Pagination from "../pagination/Pagination";
+import RentalGameTable from "../rentalGame/RentalGameTable";
 
 function RentalHistory({ userId }) {
 	const { getRentalGames } = useApi();
@@ -17,7 +17,6 @@ function RentalHistory({ userId }) {
 
 	async function fetchData() {
 		getRentalGames(userId, page, null).then((data) => {
-			console.log(data.content);
 			setRentalGames(data);
 		});
 	}
@@ -28,16 +27,14 @@ function RentalHistory({ userId }) {
 	}
 
 	return (
-		<div>
-			{rentalGames.content.map((i, index) => (
-				<RentalGame key={index} rentalGame={i} adminMode={true} />
-			))}
+		<>
+			<RentalGameTable data={rentalGames.content} updateData={fetchData} />
 			<Pagination
 				page={page}
 				totalPages={rentalGames.totalPages}
 				handleChange={handlePaginationChange}
 			/>
-		</div>
+		</>
 	);
 }
 export default RentalHistory;

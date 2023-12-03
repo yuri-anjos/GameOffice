@@ -5,7 +5,7 @@ import InputUserSearch from "./inputUserSearch/InputUserSearch";
 import MultipleSelect from "./multiple-select/MultipleSelect";
 import RentalList from "./rentalList.jsx/RentalList";
 import RentalHistory from "./rentalList.jsx/RentalHistory";
-import RentalGame from "./rentalGame/RentalGame";
+import RentalGameTable from "./rentalGame/RentalGameTable";
 
 export {
 	Pagination,
@@ -15,5 +15,5 @@ export {
 	InputUserSearch,
 	RentalList,
 	RentalHistory,
-	RentalGame,
+	RentalGameTable,
 };

@@ -8,11 +8,12 @@ public record RentalGameResponseDTO(Long id,
                                     Double rent,
                                     Double payment,
                                     GameResponseDTO game,
+                                    ComboDTO user,
                                     ComboDTO rentAdmin,
                                     ComboDTO returnAdmin,
                                     boolean active,
-                                    LocalDateTime created,
-                                    LocalDateTime returnedDate) {
+                                    LocalDateTime rentDate,
+                                    LocalDateTime returnDate) {
 
     public RentalGameResponseDTO(RentalGame rentalGame) {
         this(
@@ -20,10 +21,11 @@ public record RentalGameResponseDTO(Long id,
                 rentalGame.getRent(),
                 rentalGame.getPayment(),
                 new GameResponseDTO(rentalGame.getGame()),
+                new ComboDTO(rentalGame.getUser()),
                 new ComboDTO(rentalGame.getRentAdmin()),
                 rentalGame.getReturnAdmin() == null ? null : new ComboDTO(rentalGame.getReturnAdmin()),
-                rentalGame.isActive(), rentalGame.getCreated(),
-                rentalGame.getReturnedDate()
+                rentalGame.isActive(), rentalGame.getRentDate(),
+                rentalGame.getReturnDate()
         );
     }
 }

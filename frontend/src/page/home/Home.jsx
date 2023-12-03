@@ -155,23 +155,24 @@ function Home() {
 					</Link>
 				</div>
 				<div className={css.game_list}>
-					{data.content.length &&
-						data.content.map((game, index) => {
-							return (
-								<div
-									onClick={() => navigate(`/game/${game.id}`)}
-									className={css.game_card}
-									key={index}
-								>
-									<h3>{game.id}</h3>
-									<h3>{game.name}</h3>
-									{/* <img
+					{data.content.length
+						? data.content.map((game, index) => {
+								return (
+									<div
+										onClick={() => navigate(`/game/${game.id}`)}
+										className={css.game_card}
+										key={index}
+									>
+										<h3>{game.id}</h3>
+										<h3>{game.name}</h3>
+										{/* <img
 											src={`data:;base64,${loadImage(game)}`}
 											alt={`${game.name}-cover`}
 										/> */}
-								</div>
-							);
-						})}
+									</div>
+								);
+						  })
+						: ""}
 				</div>
 				<Pagination
 					page={page}
