@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long> {
@@ -31,4 +32,8 @@ public interface GameRepository extends JpaRepository<Game, Long> {
             Collection<Long> genres,
             Integer year,
             PageRequest pageRequest);
+
+    @Query("SELECT g FROM Game g " +
+            "WHERE g.name LIKE %?1%")
+    List<Game> searchGamesCombo(String search, PageRequest pageRequest);
 }

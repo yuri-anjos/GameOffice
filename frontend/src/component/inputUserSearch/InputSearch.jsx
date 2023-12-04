@@ -1,21 +1,15 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import css from "./InputUserSearch.module.css";
-import useApi from "../../hook/useApi";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import css from "./InputSearch.module.css";
 import useDebounce from "../../hook/useDebounce";
 import { ClipLoader } from "react-spinners";
-import { UserContext } from "../../context/UserContext";
 
-function InputUserSearch() {
+function InputSearch({ getData, handleSelected }) {
 	const refInputUserSearch = useRef(null);
+
 	const [search, setSearch] = useState("");
 	const [result, setResult] = useState([]);
 	const [visibleOptions, setVisibleOptions] = useState(false);
 	const [loading, setLoading] = useState(false);
-
-	const navigate = useNavigate();
-	const { searchUsers } = useApi();
-	const { isAuthenticated, user } = useContext(UserContext);
 	const debouncedSearch = useDebounce(search, 700);
 
 	useEffect(() => {
@@ -32,15 +26,14 @@ function InputUserSearch() {
 
 	useEffect(() => {
 		setLoading(true);
-		if (!search) {
-			setResult([]);
+		if (!search || search === debouncedSearch) {
 			setLoading(false);
 		}
 	}, [search]);
 
 	useEffect(() => {
 		async function fetchData() {
-			searchUsers(debouncedSearch)
+			getData(debouncedSearch)
 				.then((data) => {
 					setResult(data);
 				})
@@ -54,17 +47,17 @@ function InputUserSearch() {
 		}
 	}, [debouncedSearch]);
 
-	function handleSelectedUser(id) {
-		navigate(`/user/${id}`);
+	function handleSearch(option) {
+		handleSelected(option);
+		setVisibleOptions(false);
 		setSearch("");
-		setResult([]);
 	}
 
 	return (
 		<div className={css.input_user_search} ref={refInputUserSearch}>
 			<input
 				type="text"
-				placeholder="Buscar usuários"
+				placeholder="Buscar..."
 				value={search}
 				onChange={(e) => setSearch(e.target.value)}
 			/>
@@ -82,11 +75,7 @@ function InputUserSearch() {
 				{result?.length > 0 &&
 					result.map((i) => {
 						return (
-							<button
-								type="button"
-								key={i.id}
-								onClick={() => handleSelectedUser(i.id)}
-							>
+							<button type="button" key={i.id} onClick={() => handleSearch(i)}>
 								{i.description}
 							</button>
 						);
@@ -96,4 +85,4 @@ function InputUserSearch() {
 	);
 }
 
-export default InputUserSearch;
+export default InputSearch;

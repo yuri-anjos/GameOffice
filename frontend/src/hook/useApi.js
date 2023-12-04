@@ -15,6 +15,16 @@ function useApi() {
 			});
 	}
 
+	async function searchGamesCombo(search) {
+		return api
+			.get("/game/combos", {
+				params: { search, page: 0, size: 5 },
+			})
+			.then(({ data }) => {
+				return data;
+			});
+	}
+
 	async function findGame(gameId) {
 		return api.get(`/game/${gameId}`).then(({ data }) => {
 			return data;
@@ -86,6 +96,12 @@ function useApi() {
 		});
 	}
 
+	async function rentGame(userId, rentalGameId) {
+		return api.post(`/rental-game/user/${userId}/rent/${rentalGameId}`).then(({ _ }) => {
+			return;
+		});
+	}
+
 	//User
 	async function getUser() {
 		return api.get("/user").then(({ data }) => {
@@ -100,9 +116,11 @@ function useApi() {
 	}
 
 	async function searchUsers(search) {
-		return api.get("/user/search", { params: { search } }).then(({ data }) => {
-			return data;
-		});
+		return api
+			.get("/user/combos", { params: { search, page: 0, size: 5 } })
+			.then(({ data }) => {
+				return data;
+			});
 	}
 
 	async function updateUser(form) {
@@ -130,6 +148,7 @@ function useApi() {
 
 	return {
 		searchGames,
+		searchGamesCombo,
 		findGame,
 		getImage,
 		createGame,
@@ -137,6 +156,7 @@ function useApi() {
 		getActiveRentalGames,
 		getRentalGames,
 		returnRentalGame,
+		rentGame,
 		getUser,
 		findUser,
 		searchUsers,

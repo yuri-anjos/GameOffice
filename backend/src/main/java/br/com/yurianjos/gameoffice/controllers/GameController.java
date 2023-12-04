@@ -1,5 +1,6 @@
 package br.com.yurianjos.gameoffice.controllers;
 
+import br.com.yurianjos.gameoffice.dtos.ComboDTO;
 import br.com.yurianjos.gameoffice.dtos.GameRequestDTO;
 import br.com.yurianjos.gameoffice.dtos.GameResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
@@ -40,6 +41,15 @@ public class GameController {
             @RequestParam(required = false) List<Long> genres,
             @RequestParam(required = false) Integer year) {
         var response = gameService.searchGames(page, size, search, console, genres, year);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/combos")
+    public ResponseEntity<List<ComboDTO>> searchGamesCombo(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "5") int size,
+            @RequestParam(required = false) String search) {
+        var response = gameService.searchGamesCombo(page, size, search);
         return ResponseEntity.ok().body(response);
     }
 

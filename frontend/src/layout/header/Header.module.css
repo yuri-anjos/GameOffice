@@ -43,3 +43,7 @@
 .header li:hover a {
 	color: white;
 }
+
+.header .input_search {
+	width: 400px;
+}

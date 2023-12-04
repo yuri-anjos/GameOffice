@@ -4,6 +4,7 @@ import br.com.yurianjos.gameoffice.domain.Console;
 import br.com.yurianjos.gameoffice.domain.Game;
 import br.com.yurianjos.gameoffice.domain.GameImage;
 import br.com.yurianjos.gameoffice.domain.Genre;
+import br.com.yurianjos.gameoffice.dtos.ComboDTO;
 import br.com.yurianjos.gameoffice.dtos.GameRequestDTO;
 import br.com.yurianjos.gameoffice.dtos.GameResponseDTO;
 import br.com.yurianjos.gameoffice.dtos.exceptions.CustomException;
@@ -44,6 +45,19 @@ public class GameService {
                 pageRequest,
                 result.getTotalElements()
         );
+    }
+
+
+    public List<ComboDTO> searchGamesCombo(int page, int size, String search) {
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                Sort.Direction.ASC,
+                "name");
+
+        var result = gameRepository.searchGamesCombo(search, pageRequest);
+
+        return result.stream().map(ComboDTO::new).toList();
     }
 
     public GameResponseDTO getGame(Long gameId) throws CustomException {

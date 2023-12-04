@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/search")
+    @GetMapping("/combos")
     public ResponseEntity<List<ComboDTO>> searchUsers(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "5") int size,
