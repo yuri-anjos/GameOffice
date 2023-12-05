@@ -20,54 +20,92 @@ const INITIAL_FILTER = {
 function Home() {
 	const { searchGames, getImage, getGenres, getConsoles } = useApi();
 	const { pageNum } = useParams();
-	const [searchParams, setSearchParams] = useSearchParams();
+	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 
 	const [formFilter, setFormFilter] = useState(INITIAL_FILTER);
 	const [data, setData] = useState({ content: [], totalPages: 0 });
-	const [page, setPage] = useState(1);
 	const [genres, setGenres] = useState([]);
 	const [consoles, setConsoles] = useState([]);
 
 	useEffect(() => {
-		async function fetchData() {
+		async function fetchCombosData() {
 			getConsoles().then((data) => setConsoles(data));
 			getGenres().then((data) => setGenres(data));
 		}
 
-		fetchData();
-	}, []);
-
-	useEffect(() => {
-		async function getGames() {
-			const pg = parseInt(pageNum) || 1;
-			setPage(pg);
-
-			const params = {
-				genres: searchParams.getAll("genres")[0] || null,
+		async function loadFilters() {
+			const searchFilters = {
+				genres: searchParams.getAll("genres")[0],
 				console: searchParams.get("console"),
 				year: searchParams.get("year"),
 				search: searchParams.get("search"),
 			};
 
-			const searchFilters = {
-				page: pg,
-				// size: 6
-				...params,
-			};
-			searchGames(searchFilters).then((data) => {
-				setData(data);
+			setFormFilter({
+				genres: searchFilters.genres
+					? searchFilters.genres.split(",").map((i) => {
+							return { id: parseInt(i) };
+					  })
+					: [],
+				console: searchFilters.console
+					? [{ id: parseInt(searchParams.get("console")) }]
+					: [],
+				year: searchFilters.year,
+				search: searchFilters.search,
 			});
 		}
 
-		getGames();
-	}, [pageNum, searchParams]);
+		fetchCombosData();
+		loadFilters();
+		fetchData();
+	}, []);
+
+	async function fetchData(page) {
+		const pg = page || parseInt(pageNum) || 1;
+
+		const params = {
+			genres: searchParams.getAll("genres")[0],
+			console: searchParams.get("console"),
+			year: searchParams.get("year"),
+			search: searchParams.get("search"),
+		};
+
+		searchGames({ page: pg, ...params }).then((data) => {
+			setData(data);
+		});
+	}
 
 	// async function loadImage(game) {
-	// 	const result = await getImage(game.id);
-	// 	console.log(result);
-	// 	return result || undefined;
+	// 	return await getImage(game.id);
 	// }
+
+	function submitFilter(e) {
+		e.preventDefault();
+
+		const { search, genres, console, year } = formFilter;
+
+		genres.length
+			? searchParams.set(
+					"genres",
+					genres.map((i) => i.id)
+			  )
+			: searchParams.delete("genres");
+		console.length
+			? searchParams.set(
+					"console",
+					console.map((i) => i.id)
+			  )
+			: searchParams.delete("console");
+		search ? searchParams.set("search", search) : searchParams.delete("search");
+		year ? searchParams.set("year", year) : searchParams.delete("year");
+
+		navigate(
+			{ pathname: "/", search: `?${createSearchParams(searchParams)}` },
+			{ replace: true }
+		);
+		fetchData(1);
+	}
 
 	function handleFilterChange(e) {
 		setFormFilter((previous) => ({ ...previous, [e.target.name]: e.target.value }));
@@ -75,27 +113,13 @@ function Home() {
 
 	function handlePaginationChange(val) {
 		navigate({ pathname: `/${val}`, search: `?${createSearchParams(searchParams)}` });
-	}
-
-	function submitFilter(e) {
-		e.preventDefault();
-		const { search, genres, console, year } = formFilter;
-
-		genres.length &&
-			searchParams.set(
-				"genres",
-				genres.map((i) => i.id)
-			);
-		console.length && searchParams.set("console", console[0].id);
-		search && searchParams.set("search", search);
-		year && searchParams.set("year", year);
-
-		setSearchParams(searchParams, { replace: true });
+		fetchData(val);
 	}
 
 	function clearFilter() {
 		setFormFilter(INITIAL_FILTER);
 		navigate("/");
+		fetchData(1);
 	}
 
 	return (
@@ -175,7 +199,7 @@ function Home() {
 						: ""}
 				</div>
 				<Pagination
-					page={page}
+					page={parseInt(pageNum) || 1}
 					totalPages={data.totalPages}
 					handleChange={handlePaginationChange}
 				/>

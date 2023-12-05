@@ -95,6 +95,7 @@ function GameForm({ gameData, onSubmit, submitText }) {
 					setGame({ ...game, console: val });
 				}}
 				value={game.console || []}
+				limit={1}
 			/>
 
 			<button type="submit" onClick={submit}>

@@ -51,7 +51,7 @@ function useApi() {
 		const body = {
 			...form,
 			genres: form.genres.map((i) => i.id),
-			console: form.console[0].id || undefined,
+			console: form.console[0].id,
 		};
 		return api.put(`/game/${gameId}`, body).then(() => {
 			return;
@@ -62,7 +62,7 @@ function useApi() {
 		const body = {
 			...form,
 			genres: form.genres.map((i) => i.id),
-			console: form.console[0].id || undefined,
+			console: form.console[0].id,
 		};
 		return api.post("/game", body).then(({ data }) => {
 			const type = "success";

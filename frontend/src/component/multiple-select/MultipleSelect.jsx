@@ -26,6 +26,12 @@ function MultipleSelect({ text, options, handleOnChange, value, limit }) {
 		}
 	}
 
+	function getSelectedOptionsText() {
+		const selectedIds = value.map((i) => i.id);
+		const selectedCombos = options.filter((op) => selectedIds.includes(op.id));
+		return selectedCombos.map((i) => i.description).join(", ");
+	}
+
 	return (
 		<div className={css.form_control} ref={refMultipleSelect}>
 			<label>{text}:</label>
@@ -38,12 +44,7 @@ function MultipleSelect({ text, options, handleOnChange, value, limit }) {
 					setVisibleOptions(!visibleOptions);
 				}}
 			>
-				{value.length
-					? options
-							.filter((op) => value.map((i) => i.id).includes(op.id))
-							.map((i) => i.description)
-							.join(", ")
-					: "Selecione uma Opção:"}
+				{value.length ? getSelectedOptionsText() : "Selecione uma Opção:"}
 			</button>
 			<div className={css.options_container} hidden={!visibleOptions}>
 				{options.map((i) => {

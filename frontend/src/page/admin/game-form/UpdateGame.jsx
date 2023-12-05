@@ -12,7 +12,7 @@ function UpdateGame() {
 	useEffect(() => {
 		async function getData() {
 			findGame(gameId).then((data) => {
-				setGame(data);
+				setGame({ ...data, console: [data.console] });
 			});
 		}
 

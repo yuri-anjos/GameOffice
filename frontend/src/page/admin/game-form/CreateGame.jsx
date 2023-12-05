@@ -7,7 +7,6 @@ function CreateGame() {
 	const navigate = useNavigate();
 
 	const onSubmit = (form) => {
-		console.log(form);
 		createGame(form).then((id) => {
 			navigate(`/game/${id}`);
 		});
